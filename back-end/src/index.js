@@ -15,6 +15,7 @@ const postRoutes     = require('./routes/posts')
 const contactRoutes        = require('./routes/contacts')
 const connectionRoutes     = require('./routes/connections')
 const directMessageRoutes  = require('./routes/directMessages')
+const notificationRoutes   = require('./routes/notifications')
 
 const app  = express()
 const PORT = process.env.PORT || 3001
@@ -30,7 +31,8 @@ app.use('/api/feed',     feedRoutes)
 app.use('/api/posts',    postRoutes)
 app.use('/api/contacts',    contactRoutes)
 app.use('/api/connections', connectionRoutes)
-app.use('/api/dm',          directMessageRoutes)
+app.use('/api/dm',            directMessageRoutes)
+app.use('/api/notifications', notificationRoutes)
 
 // ── Health check ──────────────────────────────────────────────────────────────
 app.get('/api/health', async (_req, res) => {
