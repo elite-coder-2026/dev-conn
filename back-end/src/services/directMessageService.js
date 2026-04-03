@@ -3,7 +3,7 @@
 /** @layer Service — Direct Messages business logic */
 
 const pool           = require('../db')
-const { dm_queries: q } = require('./queries')
+const { dm_queries } = require('./queries')
 const { getIo }      = require('../socket')
 
 // ── Conversations ─────────────────────────────────────────────────────────────
@@ -13,16 +13,16 @@ async function getOrCreateConversation(requestingUserId, targetUserId) {
     const e = new Error('Cannot start a conversation with yourself'); e.status = 400; throw e
   }
 
-  const { rows: existing } = await pool.query(q.findExistingConversation, [requestingUserId, targetUserId])
+  const { rows: existing } = await pool.query(connection_queries.findExistingConversation, [requestingUserId, targetUserId])
   if (existing.length) return existing[0]
 
   const client = await pool.connect()
   try {
     await client.query('BEGIN')
-    const { rows } = await client.query(q.createConversation)
+    const { rows } = await client.query(connection_queries.createConversation)
     const conversation = rows[0]
-    await client.query(q.addParticipant, [conversation.id, requestingUserId])
-    await client.query(q.addParticipant, [conversation.id, targetUserId])
+    await client.query(connection_queries.addParticipant, [conversation.id, requestingUserId])
+    await client.query(connection_queries.addParticipant, [conversation.id, targetUserId])
     await client.query('COMMIT')
     return conversation
   } catch (err) {
@@ -36,7 +36,7 @@ async function getOrCreateConversation(requestingUserId, targetUserId) {
 // ── Messages ──────────────────────────────────────────────────────────────────
 
 async function sendMessage(requestingUserId, conversationId, body) {
-  const { rows: p } = await pool.query(q.isParticipant, [conversationId, requestingUserId])
+  const { rows: p } = await pool.query(connection_queries.isParticipant, [conversationId, requestingUserId])
   if (!p.length) {
     const e = new Error('Not a participant in this conversation'); e.status = 403; throw e
   }
@@ -49,7 +49,7 @@ async function sendMessage(requestingUserId, conversationId, body) {
     const e = new Error('Message body exceeds 5000 characters'); e.status = 400; throw e
   }
 
-  const { rows } = await pool.query(q.insertMessage, [conversationId, requestingUserId, trimmed])
+  const { rows } = await pool.query(connection_queries.insertMessage, [conversationId, requestingUserId, trimmed])
   const message = rows[0]
 
   try {
@@ -60,16 +60,16 @@ async function sendMessage(requestingUserId, conversationId, body) {
 }
 
 async function readConversation(requestingUserId, conversationId, limit = 30, before = null) {
-  const { rows: p } = await pool.query(q.isParticipant, [conversationId, requestingUserId])
+  const { rows: p } = await pool.query(connection_queries.isParticipant, [conversationId, requestingUserId])
   if (!p.length) {
     const e = new Error('Not a participant in this conversation'); e.status = 403; throw e
   }
 
   const safeLimit = Math.min(parseInt(limit, 10) || 30, 100)
-  const { rows: messages } = await pool.query(q.getMessages, [conversationId, safeLimit, before || null])
+  const { rows: messages } = await pool.query(connection_queries.getMessages, [conversationId, safeLimit, before || null])
 
-  await pool.query(q.markReadReceipts, [conversationId, requestingUserId])
-  const { rows: readRows } = await pool.query(q.updateLastReadAt, [conversationId, requestingUserId])
+  await pool.query(connection_queries.markReadReceipts, [conversationId, requestingUserId])
+  const { rows: readRows } = await pool.query(connection_queries.updateLastReadAt, [conversationId, requestingUserId])
   const readAt = readRows[0]?.last_read_at ?? new Date().toISOString()
 
   try {
@@ -83,19 +83,19 @@ async function readConversation(requestingUserId, conversationId, limit = 30, be
 // ── Inbox ─────────────────────────────────────────────────────────────────────
 
 async function getUserInbox(userId) {
-  const { rows } = await pool.query(q.getInbox, [userId])
+  const { rows } = await pool.query(connection_queries.getInbox, [userId])
   return rows
 }
 
 async function getUnreadCount(userId) {
-  const { rows } = await pool.query(q.getUnreadCount, [userId])
+  const { rows } = await pool.query(connection_queries.getUnreadCount, [userId])
   return rows[0].unread_count
 }
 
 // ── Delete ────────────────────────────────────────────────────────────────────
 
 async function deleteMessage(requestingUserId, messageId) {
-  const { rows } = await pool.query(q.softDeleteMessage, [messageId, requestingUserId])
+  const { rows } = await pool.query(connection_queries.softDeleteMessage, [messageId, requestingUserId])
   if (!rows.length) {
     const e = new Error('Message not found or not owned by you'); e.status = 404; throw e
   }
