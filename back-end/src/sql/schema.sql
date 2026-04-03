@@ -90,3 +90,18 @@ CREATE TABLE IF NOT EXISTS friend_requests (
 CREATE INDEX IF NOT EXISTS idx_friend_requests_recipient ON friend_requests (recipient_id);
 CREATE INDEX IF NOT EXISTS idx_friend_requests_requester ON friend_requests (requester_id);
 CREATE INDEX IF NOT EXISTS idx_friend_requests_status    ON friend_requests (status);
+
+-- ─────────────────────────────────────────────────────────────────────────────
+
+CREATE TABLE IF NOT EXISTS notifications (
+  id         UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id    UUID        NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  actor_id   UUID        REFERENCES users(id) ON DELETE SET NULL,
+  type       TEXT        NOT NULL CHECK (type IN ('like', 'comment', 'friend_request', 'mention', 'share')),
+  message    TEXT        NOT NULL,
+  read       BOOLEAN     NOT NULL DEFAULT FALSE,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_notifications_user_id    ON notifications (user_id);
+CREATE INDEX IF NOT EXISTS idx_notifications_created_at ON notifications (created_at DESC);
