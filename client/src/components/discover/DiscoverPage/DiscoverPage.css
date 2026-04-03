@@ -1,0 +1,75 @@
+@import '../../friends/FriendsPage/FriendsPage.css';
+
+.discover-page {
+  padding: calc(var(--header-height) + var(--space-6)) var(--space-4) var(--space-8);
+}
+
+.discover-page__inner {
+  max-width: var(--layout-max-width);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.discover-page__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.discover-page__title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+}
+
+.discover-page__section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.discover-page__section-heading {
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.discover-page__section-sub {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin-top: calc(-1 * var(--space-2));
+}
+
+/* Mutual friends display inside cards */
+.discover-card__mutuals {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.discover-card__mutual-avatars {
+  display: flex;
+}
+
+.discover-card__mutual-avatar {
+  width: 22px;
+  height: 22px;
+  border-radius: var(--radius-full);
+  border: 2px solid var(--color-surface);
+  object-fit: cover;
+  margin-left: -6px;
+}
+
+.discover-card__mutual-avatars .discover-card__mutual-avatar:first-child {
+  margin-left: 0;
+}
+
+.discover-card__mutual-label {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  text-align: center;
+  line-height: 1.4;
+}
