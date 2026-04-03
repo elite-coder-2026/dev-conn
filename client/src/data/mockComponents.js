@@ -1,0 +1,58 @@
+const mockComponents = [
+  {
+    id: 'comp1',
+    name: 'Modal Dialog',
+    description: 'Accessible modal with focus trap and backdrop dismiss.',
+    tags: ['React', 'Accessibility'],
+    stars: 84,
+    forks: 12,
+    timeAgo: '3d ago',
+  },
+  {
+    id: 'comp2',
+    name: 'Toast Notification',
+    description: 'Lightweight toast stack with auto-dismiss and progress bar.',
+    tags: ['React', 'CSS'],
+    stars: 210,
+    forks: 37,
+    timeAgo: '1w ago',
+  },
+  {
+    id: 'comp3',
+    name: 'Data Table',
+    description: 'Sortable, filterable table with virtual scrolling for large datasets.',
+    tags: ['React', 'Performance'],
+    stars: 156,
+    forks: 24,
+    timeAgo: '2w ago',
+  },
+  {
+    id: 'comp4',
+    name: 'Command Palette',
+    description: 'Keyboard-driven command palette with fuzzy search.',
+    tags: ['React', 'UX'],
+    stars: 321,
+    forks: 58,
+    timeAgo: '1mo ago',
+  },
+  {
+    id: 'comp5',
+    name: 'Kanban Board',
+    description: 'Drag-and-drop kanban with column reordering and card stacking.',
+    tags: ['React', 'DnD'],
+    stars: 97,
+    forks: 19,
+    timeAgo: '2mo ago',
+  },
+  {
+    id: 'comp6',
+    name: 'Color Picker',
+    description: 'HSL-based color picker with hex, RGB, and CSS variable output.',
+    tags: ['React', 'CSS'],
+    stars: 63,
+    forks: 8,
+    timeAgo: '3mo ago',
+  },
+]
+
+export default mockComponents
