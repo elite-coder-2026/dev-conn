@@ -1,0 +1,456 @@
+.friends-page {
+  padding: var(--space-6) var(--space-4);
+}
+
+.friends-page__inner {
+  max-width: var(--layout-max-width);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+/* Header */
+.friends-page__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.friends-page__title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+}
+
+.friends-page__tabs {
+  display: flex;
+  gap: var(--space-1);
+  background: var(--color-surface);
+  border-radius: var(--radius-full);
+  padding: 4px;
+  box-shadow: var(--shadow-card);
+}
+
+.friends-page__tab {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.friends-page__tab:hover {
+  background: var(--color-surface-alt);
+  color: var(--color-text-primary);
+}
+
+.friends-page__tab--active {
+  background: var(--color-accent);
+  color: #fff;
+}
+
+.friends-page__tab-badge {
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  background: #E94F4F;
+  color: #fff;
+  font-size: 10px;
+  font-weight: var(--font-weight-bold);
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Search */
+.friends-page__search {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  padding: var(--space-2) var(--space-4);
+  max-width: 320px;
+  color: var(--color-text-muted);
+  box-shadow: var(--shadow-card);
+}
+
+.friends-page__search input {
+  flex: 1;
+  border: none;
+  background: none;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+  outline: none;
+}
+
+.friends-page__search input::placeholder {
+  color: var(--color-text-muted);
+}
+
+/* Grid */
+.friends-page__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: var(--space-4);
+}
+
+.friends-page__empty {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  grid-column: 1 / -1;
+}
+
+/* Friend card */
+.friend-card {
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-2);
+}
+
+.friend-card__avatar {
+  margin-bottom: var(--space-1);
+}
+
+.friend-card__name {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.friend-card__handle {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.friend-card__status {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.friend-card__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: var(--radius-full);
+  background: var(--color-offline);
+}
+
+.friend-card__dot--online {
+  background: var(--color-online);
+}
+
+.friend-card__mutual {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.friend-card__actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  width: 100%;
+  margin-top: var(--space-1);
+}
+
+/* Shared button styles */
+.friend-card__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  transition: background var(--transition-fast), opacity var(--transition-fast);
+}
+
+.friend-card__btn--primary {
+  background: var(--color-accent);
+  color: #fff;
+}
+
+.friend-card__btn--primary:hover {
+  background: var(--color-accent-hover);
+}
+
+.friend-card__btn--secondary {
+  background: var(--color-accent-muted);
+  color: var(--color-accent);
+}
+
+.friend-card__btn--secondary:hover {
+  background: rgba(91,79,233,0.18);
+}
+
+.friend-card__btn--ghost {
+  background: var(--color-surface-alt);
+  color: var(--color-text-secondary);
+}
+
+.friend-card__btn--ghost:hover {
+  background: var(--color-border);
+  color: var(--color-text-primary);
+}
+
+.friend-card__btn--sent {
+  background: var(--color-surface-alt);
+  color: var(--color-text-muted);
+  cursor: default;
+  opacity: 0.7;
+}
+
+/* Requests */
+.friends-page__section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.request-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  padding: var(--space-4);
+}
+
+.request-row__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.request-row__name {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.request-row__meta {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  margin-top: 2px;
+}
+
+.request-row__actions {
+  display: flex;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+.request-row__actions .friend-card__btn {
+  width: auto;
+  padding: var(--space-2) var(--space-4);
+}
+
+/* ─── Bio line on discover cards ───────────────────────────────── */
+.friend-card__bio {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  text-align: center;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ─── Connection button with hover label swap ───────────────────── */
+.btn-connection {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-connection__default,
+.btn-connection__hover {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  transition: opacity var(--transition-fast), transform var(--transition-fast);
+}
+
+.btn-connection__hover {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: translateY(4px);
+}
+
+.btn-connection:hover .btn-connection__default {
+  opacity: 0;
+  transform: translateY(-4px);
+}
+
+.btn-connection:hover .btn-connection__hover {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Add Friend */
+.btn-connection--add {
+  background: var(--color-accent);
+  color: #fff;
+}
+.btn-connection--add:hover {
+  background: var(--color-accent-hover);
+}
+
+/* Pending (amber) */
+.btn-connection--pending {
+  background: rgba(245, 158, 11, 0.12);
+  color: #B45309;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+.btn-connection--pending:hover {
+  background: rgba(239, 68, 68, 0.08);
+  border-color: rgba(239, 68, 68, 0.3);
+  color: #DC2626;
+}
+
+/* Friends / Following (muted green) */
+.btn-connection--friends,
+.btn-connection--following {
+  background: rgba(5, 150, 105, 0.10);
+  color: #065F46;
+  border: 1px solid rgba(5, 150, 105, 0.25);
+}
+.btn-connection--friends:hover,
+.btn-connection--following:hover {
+  background: rgba(239, 68, 68, 0.08);
+  border-color: rgba(239, 68, 68, 0.3);
+  color: #DC2626;
+}
+
+/* Follow (same as Add Friend) */
+.btn-connection--follow {
+  background: var(--color-accent);
+  color: #fff;
+}
+.btn-connection--follow:hover {
+  background: var(--color-accent-hover);
+}
+
+/* Destructive remove/unfollow in connections list */
+.btn-destructive:hover {
+  background: rgba(239, 68, 68, 0.08);
+  color: #DC2626;
+}
+
+/* ─── Suggestions section ───────────────────────────────────────── */
+.suggestions-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+}
+
+.suggestions-section__heading {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.suggestions-row {
+  display: flex;
+  gap: var(--space-3);
+  overflow-x: auto;
+  padding-bottom: var(--space-2);
+  scrollbar-width: none;
+}
+
+.suggestions-row::-webkit-scrollbar {
+  display: none;
+}
+
+.suggestion-card {
+  position: relative;
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  padding: var(--space-4) var(--space-3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  min-width: 148px;
+  flex-shrink: 0;
+  text-align: center;
+}
+
+.suggestion-card__dismiss {
+  position: absolute;
+  top: var(--space-2);
+  right: var(--space-2);
+  background: var(--color-surface-alt);
+  border: none;
+  border-radius: var(--radius-full);
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.suggestion-card__dismiss:hover {
+  background: var(--color-border);
+  color: var(--color-text-primary);
+}
+
+.suggestion-card__btn {
+  width: 100%;
+  margin-top: var(--space-1);
+  font-size: var(--font-size-xs);
+  padding: var(--space-1) var(--space-2);
+}
+
+/* ─── Toast ─────────────────────────────────────────────────────── */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: var(--color-text-primary);
+  color: #fff;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+  z-index: 1000;
+  animation: toast-in 200ms ease forwards;
+}
+
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
