@@ -10,7 +10,7 @@ async function sendRequest(requesterId, recipientId) {
   }
 
   // Block if a request already exists in either direction
-  const { rows: existing } = await pool.query(q.connection_status, [requesterId, recipientId])
+  const { rows: existing } = await pool.query(connection_queries.connection_status, [requesterId, recipientId])
   if (existing.length) {
     const row = existing[0]
     if (row.status === 'accepted') {
@@ -26,12 +26,12 @@ async function sendRequest(requesterId, recipientId) {
     )
   }
 
-  const { rows } = await pool.query(q.send_request, [requesterId, recipientId])
+  const { rows } = await pool.query(connection_queries.send_request, [requesterId, recipientId])
   return rows[0] ?? null
 }
 
 async function cancelRequest(requestId, requesterId) {
-  const { rows } = await pool.query(q.cancel_request, [requestId, requesterId])
+  const { rows } = await pool.query(connection_queries.cancel_request, [requestId, requesterId])
   if (!rows.length) {
     const e = new Error('Request not found or already resolved'); e.status = 404; throw e
   }
@@ -39,17 +39,17 @@ async function cancelRequest(requestId, requesterId) {
 }
 
 async function getIncomingRequests(userId) {
-  const { rows } = await pool.query(q.incoming_requests, [userId])
+  const { rows } = await pool.query(connection_queries.incoming_requests, [userId])
   return rows.map(formatRequest)
 }
 
 async function getOutgoingRequests(userId) {
-  const { rows } = await pool.query(q.outgoing_requests, [userId])
+  const { rows } = await pool.query(connection_queries.outgoing_requests, [userId])
   return rows
 }
 
 async function acceptRequest(requestId, recipientId) {
-  const { rows } = await pool.query(q.accept_request, [requestId, recipientId])
+  const { rows } = await pool.query(connection_queries.accept_request, [requestId, recipientId])
   if (!rows.length) {
     const e = new Error('Request not found or not pending'); e.status = 404; throw e
   }
@@ -57,7 +57,7 @@ async function acceptRequest(requestId, recipientId) {
 }
 
 async function declineRequest(requestId, recipientId) {
-  const { rows } = await pool.query(q.decline_request, [requestId, recipientId])
+  const { rows } = await pool.query(connection_queries.decline_request, [requestId, recipientId])
   if (!rows.length) {
     const e = new Error('Request not found or not pending'); e.status = 404; throw e
   }
@@ -67,12 +67,12 @@ async function declineRequest(requestId, recipientId) {
 // ── Friends ───────────────────────────────────────────────────────────────────
 
 async function getFriends(userId) {
-  const { rows } = await pool.query(q.friends, [userId])
+  const { rows } = await pool.query(connection_queries.friends, [userId])
   return rows.map(formatFriend)
 }
 
 async function unfriend(userId, targetId) {
-  const { rows } = await pool.query(q.unfriend, [userId, targetId])
+  const { rows } = await pool.query(connection_queries.unfriend, [userId, targetId])
   if (!rows.length) {
     const e = new Error('Not friends with this user'); e.status = 404; throw e
   }
@@ -80,7 +80,7 @@ async function unfriend(userId, targetId) {
 }
 
 async function getConnectionStatus(userId, targetId) {
-  const { rows } = await pool.query(q.connection_status, [userId, targetId])
+  const { rows } = await pool.query(connection_queries.connection_status, [userId, targetId])
   if (!rows.length) return { status: 'none' }
 
   const row = rows[0]
@@ -94,7 +94,7 @@ async function getConnectionStatus(userId, targetId) {
 // ── Discover & suggestions ────────────────────────────────────────────────────
 
 async function getDiscover(userId, limit = 20, offset = 0) {
-  const { rows } = await pool.query(q.discover, [userId, limit, offset])
+  const { rows } = await pool.query(connection_queries.discover, [userId, limit, offset])
   return rows.map(u => ({
     id:           u.id,
     name:         u.name,
@@ -107,7 +107,7 @@ async function getDiscover(userId, limit = 20, offset = 0) {
 }
 
 async function getSuggestions(userId, limit = 10, offset = 0) {
-  const { rows } = await pool.query(q.suggestions, [userId, limit, offset])
+  const { rows } = await pool.query(connection_queries.suggestions, [userId, limit, offset])
   return rows.map(u => ({
     id:          u.id,
     name:        u.name,
