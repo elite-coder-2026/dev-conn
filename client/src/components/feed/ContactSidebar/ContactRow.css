@@ -1,0 +1,60 @@
+.contact-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.contact-row:hover {
+  background: var(--color-surface-alt);
+}
+
+.contact-row__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.contact-row__name {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.contact-row__handle {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.contact-row__msg-btn {
+  opacity: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-accent);
+  transition: opacity var(--transition-fast), background var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.contact-row:hover .contact-row__msg-btn {
+  opacity: 1;
+}
+
+.contact-row__msg-btn:hover {
+  background: var(--color-accent-muted);
+}
+
+.contact-row__msg-btn svg {
+  font-size: 16px !important;
+  width: 16px !important;
+  height: 16px !important;
+}
