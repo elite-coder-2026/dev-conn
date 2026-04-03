@@ -1,0 +1,96 @@
+.activity-graph {
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  padding: var(--space-4);
+  overflow: hidden;
+}
+
+.activity-graph__heading {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-3);
+}
+
+.activity-graph__scroll {
+  overflow-x: auto;
+}
+
+.activity-graph__inner {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: max-content;
+}
+
+/* Month labels row */
+.activity-graph__months {
+  display: grid;
+  grid-template-columns: repeat(53, 14px);
+  padding-left: 28px;
+}
+
+.activity-graph__month {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+/* Body: day labels + grid side by side */
+.activity-graph__body {
+  display: flex;
+  gap: 4px;
+}
+
+.activity-graph__days {
+  display: grid;
+  grid-template-rows: repeat(7, 11px);
+  gap: 3px;
+  width: 24px;
+  flex-shrink: 0;
+}
+
+.activity-graph__days span {
+  font-size: 9px;
+  color: var(--color-text-muted);
+  line-height: 11px;
+  text-align: right;
+  padding-right: 4px;
+}
+
+/* Cell grid */
+.activity-graph__grid {
+  display: grid;
+  grid-template-columns: repeat(53, 11px);
+  grid-template-rows: repeat(7, 11px);
+  gap: 3px;
+}
+
+.activity-graph__cell {
+  width: 11px;
+  height: 11px;
+  border-radius: 2px;
+  cursor: default;
+  transition: opacity var(--transition-fast);
+}
+
+.activity-graph__cell:hover {
+  opacity: 0.75;
+}
+
+/* Legend */
+.activity-graph__legend {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  margin-top: var(--space-3);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.activity-graph__legend-cell {
+  width: 11px;
+  height: 11px;
+  border-radius: 2px;
+}
