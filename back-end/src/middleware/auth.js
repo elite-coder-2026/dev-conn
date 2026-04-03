@@ -2,7 +2,7 @@
 const jwt = require('jsonwebtoken')
 
 module.exports = function requireAuth(req, res, next) {
-  const header = req.headers.authorization
+  const header = reconnection_queries.headers.authorization
   if (!header || !header.startsWith('Bearer ')) {
     return res.status(401).json({ error: 'No token provided' })
   }
@@ -10,7 +10,7 @@ module.exports = function requireAuth(req, res, next) {
   const token = header.slice(7)
   try {
     const payload = jwt.verify(token, process.env.JWT_SECRET)
-    req.user = { id: payload.sub, handle: payload.handle }
+    reconnection_queries.user = { id: payload.sub, handle: payload.handle }
     next()
   } catch {
     return res.status(401).json({ error: 'Invalid or expired token' })
