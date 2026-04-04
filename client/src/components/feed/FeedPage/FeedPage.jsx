@@ -1,13 +1,53 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import LeftSidebar from '../LeftSidebar/LeftSidebar'
 import PostComposer from '../PostComposer/PostComposer'
 import PostFeed from '../PostFeed/PostFeed'
 import ContactSidebar from '../ContactSidebar/ContactSidebar'
 import ChatTray from '../../chat/ChatTray/ChatTray'
-import mockUser from '../../../data/mockUser'
-import initialPosts from '../../../data/mockPosts'
 import mockContacts from '../../../data/mockContacts'
 import './FeedPage.css'
+
+function timeAgo(dateStr) {
+  const diff = Math.floor((Date.now() - new Date(dateStr)) / 1000)
+  if (diff < 60) return `${diff}s ago`
+  if (diff < 3600) return `${Math.floor(diff / 60)}m ago`
+  if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`
+  return `${Math.floor(diff / 86400)}d ago`
+}
+
+function normalisePost(row) {
+  let type = row.image_url ? 'image' : 'text'
+  let content = row.content
+  let code
+
+  if (content.startsWith('Component:')) {
+    const codeMatch = content.match(/```html\n([\s\S]*?)```/)
+    if (codeMatch) {
+      type = 'component'
+      code = codeMatch[1].trim()
+      content = content.replace(/\n*```html\n[\s\S]*?```/, '').trim()
+    }
+  }
+
+  return {
+    id: row.id,
+    type,
+    author: {
+      name: row.author_name,
+      handle: row.author_handle,
+      avatarSrc: row.author_avatar_url,
+    },
+    timeAgo: timeAgo(row.created_at),
+    content,
+    code,
+    imageUrl: row.image_url || undefined,
+    likes: row.likes_count,
+    comments: row.comments_count,
+    shares: row.shares_count,
+    likedByMe: row.liked_by_me,
+    sharedByMe: row.shared_by_me,
+  }
+}
 
 const MOCK_REPLIES = [
   "Hey! What's up? 👋",
@@ -22,12 +62,23 @@ const MOCK_REPLIES = [
 
 let msgIdCounter = 1
 
-export default function FeedPage() {
-  const [posts, setPosts] = useState(initialPosts)
+export default function FeedPage({ currentUser = {} }) {
+  const [posts, setPosts] = useState([])
   const [chats, setChats] = useState([])
+
+  useEffect(() => {
+    fetch('/api/feed/', { credentials: 'include' })
+      .then(res => res.ok ? res.json() : Promise.reject(res.status))
+      .then(data => setPosts(data.posts.map(normalisePost)))
+      .catch(err => console.error('Feed fetch failed:', err))
+  }, [])
 
   function handleAddPost(post) {
     setPosts(prev => [post, ...prev])
+  }
+
+  function handleDeletePost(postId) {
+    setPosts(prev => prev.filter(p => p.id !== postId))
   }
 
   function handleOpenChat(contactId) {
@@ -118,8 +169,8 @@ export default function FeedPage() {
         </aside>
 
         <section className="feed-page__center">
-          <PostComposer user={mockUser} onPost={handleAddPost} />
-          <PostFeed posts={posts} />
+          <PostComposer user={currentUser} onPost={handleAddPost} />
+          <PostFeed posts={posts} onDelete={handleDeletePost} currentUser={currentUser} />
         </section>
 
         <aside className="feed-page__right" aria-label="Contacts">
