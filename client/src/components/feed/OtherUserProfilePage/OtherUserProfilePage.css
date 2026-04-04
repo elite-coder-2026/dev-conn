@@ -1,0 +1,52 @@
+.other-profile-page {
+  padding: calc(var(--header-height) + var(--space-6)) var(--space-4) var(--space-8);
+}
+
+.other-profile-page__inner {
+  max-width: var(--layout-max-width);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.other-profile__mutuals {
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.other-profile__mutuals-heading {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.other-profile__mutual-avatars {
+  display: flex;
+}
+
+.other-profile__mutual-avatar {
+  width: 22px;
+  height: 22px;
+  border-radius: var(--radius-full);
+  border: 2px solid var(--color-surface);
+  object-fit: cover;
+  margin-left: -6px;
+}
+
+.other-profile__mutual-avatars .other-profile__mutual-avatar:first-child {
+  margin-left: 0;
+}
+
+.other-profile__mutual-label {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  text-align: center;
+  line-height: 1.4;
+}
