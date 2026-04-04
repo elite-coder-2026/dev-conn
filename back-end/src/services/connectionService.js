@@ -1,6 +1,6 @@
 'use strict'
 const pool = require('../db')
-const { connection_queries: q } = require('./queries')
+const { connection_queries } = require('./queries')
 
 // ── Friend requests ───────────────────────────────────────────────────────────
 
