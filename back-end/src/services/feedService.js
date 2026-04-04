@@ -33,4 +33,9 @@ async function getUserPosts(profileUserId, requestingUserId, limit, offset) {
   return formatPosts(rows)
 }
 
-module.exports = { getFeed, getUserPosts }
+async function getComponents() {
+  const { rows } = await pool.query(feed_queries.get_components)
+  return rows
+}
+
+module.exports = { getFeed, getUserPosts, getComponents }
