@@ -1,7 +1,7 @@
 'use strict'
 
 module.exports = function errorHandler(err, req, res, _next) {
-  console.error(`[${new Date().toISOString()}] ${reconnection_queries.method} ${reconnection_queries.path}`, err.message)
+  console.error(`[${new Date().toISOString()}] ${req.method} ${req.path}`, err.message)
 
   // PostgreSQL error codes
   if (err.code === '23505') {
