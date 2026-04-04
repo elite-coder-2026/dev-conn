@@ -4,25 +4,25 @@ import NotificationsIcon from '@mui/icons-material/Notifications'
 import Avatar from '../../common/Avatar/Avatar'
 import IconButton from '../../common/IconButton/IconButton'
 import NotificationsDropdown from '../../common/NotificationsDropdown/NotificationsDropdown'
-import mockUser from '../../../data/mockUser'
 import './AppHeader.css'
 
 const NAV_LINKS = [
-  { label: 'Feed',     id: 'feed'     },
-  { label: 'Messages', id: 'messages' },
-  { label: 'Friends',  id: 'friends'  },
-  { label: 'Discover', id: 'discover' },
-  { label: 'Activity', id: 'activity' },
-  { label: 'Videos',   id: 'videos'   },
+  { label: 'Feed',      id: 'feed'     },
+  { label: 'Messages',  id: 'messages' },
+  { label: 'Friends',   id: 'friends'  },
+  { label: 'Discover',  id: 'discover' },
+  { label: 'Activity',  id: 'activity' },
+  { label: 'Videos',    id: 'videos'   },
+  { label: 'Editor',    id: 'editor'   },
 ]
 
-export default function AppHeader({ activeNav, setActiveNav }) {
+export default function AppHeader({ activeNav, setActiveNav, onSearch, currentUser = {} }) {
   const [search, setSearch]               = useState('')
   const [notifOpen, setNotifOpen]         = useState(false)
   const [notifications, setNotifications] = useState([])
 
   useEffect(() => {
-    fetch(`http://localhost:3001/api/notifications?userId=${mockUser.id}`)
+    fetch('/api/notifications', { credentials: 'include' })
       .then(r => r.ok ? r.json() : Promise.reject(r.status))
       .then(data => setNotifications(data))
       .catch(() => {})
@@ -36,7 +36,7 @@ export default function AppHeader({ activeNav, setActiveNav }) {
 
   function handleMarkAllRead() {
     setNotifications(prev => prev.map(n => ({ ...n, read: true })))
-    fetch(`http://localhost:3001/api/notifications/read-all?userId=${mockUser.id}`, { method: 'PATCH' })
+    fetch('/api/notifications/read-all', { method: 'PATCH', credentials: 'include' })
       .catch(() => {})
   }
 
@@ -59,12 +59,15 @@ export default function AppHeader({ activeNav, setActiveNav }) {
 
         <div className="app-header__search">
           <div className="search-bar">
-            <SearchIcon />
+            <button className="search-bar__icon-btn" onClick={() => search.trim() && onSearch(search.trim())} aria-label="Submit search">
+              <SearchIcon />
+            </button>
             <input
               type="text"
               placeholder="Search devconn"
               value={search}
               onChange={e => setSearch(e.target.value)}
+              onKeyDown={e => { if (e.key === 'Enter' && search.trim()) onSearch(search.trim()) }}
               aria-label="Search"
             />
           </div>
@@ -88,7 +91,7 @@ export default function AppHeader({ activeNav, setActiveNav }) {
             )}
           </div>
           <button className="app-header__avatar-btn" aria-label="Profile" onClick={() => setActiveNav('profile')}>
-            <Avatar src={mockUser.avatarSrc} alt={mockUser.name} size="sm" />
+            <Avatar src={currentUser.avatar_url} alt={currentUser.name || ''} size="sm" />
           </button>
         </div>
       </div>

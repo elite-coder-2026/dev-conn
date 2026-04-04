@@ -87,12 +87,25 @@
   box-shadow: 0 0 0 3px var(--color-accent-muted);
 }
 
+.search-bar__icon-btn {
+  display: flex;
+  align-items: center;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
 .search-bar svg {
   color: var(--color-text-muted);
   font-size: 18px !important;
   width: 18px !important;
   height: 18px !important;
-  flex-shrink: 0;
+}
+
+.search-bar__icon-btn:hover svg {
+  color: var(--color-accent);
 }
 
 .search-bar input {
