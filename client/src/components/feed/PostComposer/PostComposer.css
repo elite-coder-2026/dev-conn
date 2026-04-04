@@ -152,6 +152,30 @@
 
 /* Component editor */
 .post-composer__component-editor {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.post-composer__comp-meta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.post-composer__comp-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2);
+}
+
+.post-composer__comp-meta .post-composer__field[rows] {
+  height: auto;
+  padding: var(--space-2) var(--space-3);
+  resize: none;
+}
+
+.post-composer__code-preview-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: var(--space-3);

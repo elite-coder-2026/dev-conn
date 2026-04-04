@@ -23,17 +23,20 @@ const DEFAULT_COMPONENT_CODE = `<style>
 </style>
 <div class="box">Hello, world!</div>`
 
-let postIdCounter = 100
-
 export default function PostComposer({ user, onPost }) {
-  const [expanded, setExpanded] = useState(false)
-  const [type, setType]         = useState('text')
-  const [text, setText]         = useState('')
-  const [imageUrl, setImageUrl] = useState('')
-  const [videoUrl, setVideoUrl] = useState('')
-  const [linkUrl, setLinkUrl]   = useState('')
-  const [linkTitle, setLinkTitle] = useState('')
-  const [code, setCode]         = useState(DEFAULT_COMPONENT_CODE)
+  const [expanded, setExpanded]           = useState(false)
+  const [type, setType]                   = useState('text')
+  const [text, setText]                   = useState('')
+  const [imageUrl, setImageUrl]           = useState('')
+  const [videoUrl, setVideoUrl]           = useState('')
+  const [linkUrl, setLinkUrl]             = useState('')
+  const [linkTitle, setLinkTitle]         = useState('')
+  const [code, setCode]                   = useState(DEFAULT_COMPONENT_CODE)
+  const [compName, setCompName]           = useState('')
+  const [compVersion, setCompVersion]     = useState('1.0.0')
+  const [compDesc, setCompDesc]           = useState('')
+  const [compDeps, setCompDeps]           = useState('')
+  const [compLicense, setCompLicense]     = useState('MIT')
   const textareaRef = useRef(null)
 
   function reset() {
@@ -45,6 +48,11 @@ export default function PostComposer({ user, onPost }) {
     setLinkUrl('')
     setLinkTitle('')
     setCode(DEFAULT_COMPONENT_CODE)
+    setCompName('')
+    setCompVersion('1.0.0')
+    setCompDesc('')
+    setCompDeps('')
+    setCompLicense('MIT')
   }
 
   function getYouTubeEmbedUrl(url) {
@@ -58,34 +66,66 @@ export default function PostComposer({ user, onPost }) {
     if (type === 'image' && !imageUrl.trim()) return false
     if (type === 'video' && !videoUrl.trim()) return false
     if (type === 'link' && !linkUrl.trim()) return false
-    if (type === 'component' && !code.trim()) return false
+    if (type === 'component' && (!compName.trim() || !code.trim())) return false
     return true
   }
 
-  function handleSubmit() {
-    const base = {
-      id: `p${postIdCounter++}`,
-      type,
-      author: {
-        name: user.name,
-        handle: user.handle,
-        avatarSrc: user.avatarSrc,
-      },
-      timeAgo: 'Just now',
-      content: text.trim(),
-      likes: 0,
-      comments: 0,
-      shares: 0,
+  async function handleSubmit() {
+    let content = text.trim()
+    if (type === 'component') {
+      const lines = [
+        `Component: ${compName.trim()}`,
+        `Version: ${compVersion.trim()}`,
+        `Author: ${user.name} (@${user.handle})`,
+        `License: ${compLicense.trim()}`,
+      ]
+      if (compDeps.trim()) lines.push(`Dependencies: ${compDeps.trim()}`)
+      if (compDesc.trim()) lines.push(`\n${compDesc.trim()}`)
+      lines.push(`\n\`\`\`html\n${code.trim()}\n\`\`\``)
+      content = lines.join('\n')
     }
 
-    let post = base
-    if (type === 'image')     post = { ...base, imageUrl: imageUrl.trim() }
-    if (type === 'video')     post = { ...base, videoUrl: getYouTubeEmbedUrl(videoUrl.trim()) }
-    if (type === 'link')      post = { ...base, link: { url: linkUrl.trim(), title: linkTitle.trim() || linkUrl.trim(), description: '', domain: new URL(linkUrl.trim()).hostname, image: null } }
-    if (type === 'component') post = { ...base, code: code.trim() }
+    const body = { content }
+    if (type === 'image' && imageUrl.trim()) body.image_url = imageUrl.trim()
 
-    onPost(post)
-    reset()
+    try {
+      const res = await fetch('/api/posts/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(body),
+      })
+      if (!res.ok) return
+      const saved = await res.json()
+      onPost({
+        id: saved.id,
+        type: type === 'component' ? 'component' : saved.image_url ? 'image' : 'text',
+        author: {
+          name: saved.author_name,
+          handle: saved.author_handle,
+          avatarSrc: saved.author_avatar_url,
+        },
+        timeAgo: 'Just now',
+        content: type === 'component'
+          ? [
+              `Component: ${compName.trim()}`,
+              `Version: ${compVersion.trim()}`,
+              `Author: ${user.name} (@${user.handle})`,
+              `License: ${compLicense.trim()}`,
+              compDeps.trim() ? `Dependencies: ${compDeps.trim()}` : '',
+              compDesc.trim() ? `\n${compDesc.trim()}` : '',
+            ].filter(Boolean).join('\n')
+          : saved.content,
+        code: type === 'component' ? code.trim() : undefined,
+        imageUrl: saved.image_url || undefined,
+        likes: 0,
+        comments: 0,
+        shares: 0,
+      })
+      reset()
+    } catch (err) {
+      console.error('Post failed:', err)
+    }
   }
 
   if (!expanded) {
@@ -183,24 +223,65 @@ export default function PostComposer({ user, onPost }) {
 
         {type === 'component' && (
           <div className="post-composer__component-editor">
-            <div className="post-composer__code-wrap">
-              <p className="post-composer__code-label">HTML / CSS / JS</p>
+            <div className="post-composer__comp-meta">
+              <input
+                className="post-composer__field"
+                type="text"
+                placeholder="Component name *"
+                value={compName}
+                onChange={e => setCompName(e.target.value)}
+              />
+              <div className="post-composer__comp-row">
+                <input
+                  className="post-composer__field"
+                  type="text"
+                  placeholder="Version (e.g. 1.0.0)"
+                  value={compVersion}
+                  onChange={e => setCompVersion(e.target.value)}
+                />
+                <input
+                  className="post-composer__field"
+                  type="text"
+                  placeholder="License (e.g. MIT)"
+                  value={compLicense}
+                  onChange={e => setCompLicense(e.target.value)}
+                />
+              </div>
+              <input
+                className="post-composer__field"
+                type="text"
+                placeholder="Dependencies (e.g. React 18, Tailwind)"
+                value={compDeps}
+                onChange={e => setCompDeps(e.target.value)}
+              />
               <textarea
-                className="post-composer__code"
-                value={code}
-                onChange={e => setCode(e.target.value)}
-                rows={10}
-                spellCheck={false}
+                className="post-composer__field"
+                placeholder="Description — what does this component do?"
+                value={compDesc}
+                onChange={e => setCompDesc(e.target.value)}
+                rows={2}
               />
             </div>
-            <div className="post-composer__preview-wrap">
-              <p className="post-composer__code-label">Preview</p>
-              <iframe
-                className="post-composer__preview-frame"
-                srcDoc={code}
-                sandbox="allow-scripts"
-                title="Component preview"
-              />
+            <div className="post-composer__code-preview-row">
+              <div className="post-composer__code-wrap">
+                <p className="post-composer__code-label">HTML / CSS / JS</p>
+                <textarea
+                  className="post-composer__code"
+                  value={code}
+                  onChange={e => setCode(e.target.value)}
+                  rows={10}
+                  spellCheck={false}
+                />
+              </div>
+              <div className="post-composer__preview-wrap">
+                <p className="post-composer__code-label">Preview</p>
+                <iframe
+                  className="post-composer__preview-frame"
+                  srcDoc={code}
+                  sandbox="allow-scripts"
+                  title="Component preview"
+                />
+              </div>
             </div>
           </div>
         )}
