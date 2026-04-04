@@ -4,6 +4,7 @@ require('dotenv').config()
 const http         = require('http')
 const express      = require('express')
 const cors         = require('cors')
+const cookieParser = require('cookie-parser')
 const pool         = require('./db')
 const errorHandler = require('./middleware/errorHandler')
 const { init: initSocket } = require('./socket')
@@ -21,7 +22,8 @@ const app  = express()
 const PORT = process.env.PORT || 3001
 
 // ── Middleware ────────────────────────────────────────────────────────────────
-app.use(cors({ origin: process.env.CLIENT_ORIGIN || 'http://localhost:5173' }))
+app.use(cors({ origin: process.env.CLIENT_ORIGIN || 'http://localhost:5173', credentials: true }))
+app.use(cookieParser())
 app.use(express.json())
 
 // ── Routes ────────────────────────────────────────────────────────────────────
