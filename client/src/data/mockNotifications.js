@@ -1,0 +1,58 @@
+const mockNotifications = [
+  {
+    id: 'n1',
+    type: 'like',
+    name: 'Jordan Kim',
+    avatarSrc: 'https://i.pravatar.cc/150?u=c1',
+    message: 'liked your post',
+    timeAgo: '2m ago',
+    read: false,
+  },
+  {
+    id: 'n2',
+    type: 'comment',
+    name: 'Priya Nair',
+    avatarSrc: 'https://i.pravatar.cc/150?u=c2',
+    message: 'commented on your post: "This is really cool!"',
+    timeAgo: '14m ago',
+    read: false,
+  },
+  {
+    id: 'n3',
+    type: 'friend_request',
+    name: 'Amara Osei',
+    avatarSrc: 'https://i.pravatar.cc/150?u=p1',
+    message: 'sent you a friend request',
+    timeAgo: '1h ago',
+    read: false,
+  },
+  {
+    id: 'n4',
+    type: 'mention',
+    name: 'Marcus Webb',
+    avatarSrc: 'https://i.pravatar.cc/150?u=c3',
+    message: 'mentioned you in a comment',
+    timeAgo: '3h ago',
+    read: true,
+  },
+  {
+    id: 'n5',
+    type: 'share',
+    name: 'Lena Hoffmann',
+    avatarSrc: 'https://i.pravatar.cc/150?u=c4',
+    message: 'shared your post',
+    timeAgo: '5h ago',
+    read: true,
+  },
+  {
+    id: 'n6',
+    type: 'like',
+    name: 'Ryan Patel',
+    avatarSrc: 'https://i.pravatar.cc/150?u=c5',
+    message: 'liked your comment',
+    timeAgo: 'Yesterday',
+    read: true,
+  },
+]
+
+export default mockNotifications
