@@ -6,6 +6,41 @@
 }
 
 /* Header */
+.post-card__kebab-wrap {
+  position: relative;
+}
+
+.post-card__menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-card);
+  min-width: 140px;
+  z-index: 10;
+  overflow: hidden;
+}
+
+.post-card__menu-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+  transition: background var(--transition-fast);
+}
+
+.post-card__menu-item:hover {
+  background: var(--color-surface-alt);
+}
+
+.post-card__menu-item--danger {
+  color: #e53935;
+}
+
 .post-card__header {
   display: flex;
   align-items: center;
@@ -65,6 +100,64 @@
 /* Body */
 .post-card__body {
   padding: 0 var(--space-4) var(--space-4);
+}
+
+.post-card__edit {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.post-card__edit-textarea {
+  width: 100%;
+  padding: var(--space-3);
+  font-size: var(--font-size-base);
+  font-family: var(--font-family);
+  color: var(--color-text-primary);
+  background: var(--color-bg);
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius-sm);
+  resize: vertical;
+  outline: none;
+  line-height: 1.6;
+}
+
+.post-card__edit-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+}
+
+.post-card__edit-cancel {
+  padding: var(--space-1) var(--space-4);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+  border-radius: var(--radius-full);
+  transition: background var(--transition-fast);
+}
+
+.post-card__edit-cancel:hover {
+  background: var(--color-surface-alt);
+}
+
+.post-card__edit-save {
+  padding: var(--space-1) var(--space-4);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  background: var(--color-accent);
+  color: var(--color-text-on-accent);
+  border-radius: var(--radius-full);
+  transition: background var(--transition-fast);
+}
+
+.post-card__edit-save:hover:not(:disabled) {
+  background: var(--color-accent-hover);
+}
+
+.post-card__edit-save:disabled {
+  opacity: 0.45;
+  cursor: default;
 }
 
 .post-card__content {
