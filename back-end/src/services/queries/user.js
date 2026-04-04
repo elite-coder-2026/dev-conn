@@ -3,7 +3,7 @@
 const user_queries = {
   create: /*sql*/ `
     INSERT INTO users (name, handle, avatar_url, cover_color, password_hash)
-    VALUES ($1, $2, $3, $4, $5)
+    VALUES ($1, $2, $3, COALESCE($4, 'linear-gradient(135deg, #5B4FE9 0%, #7B72ED 100%)'), $5)
     RETURNING id, name, handle, avatar_url, cover_color, is_online, created_at
   `,
 
