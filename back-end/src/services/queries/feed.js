@@ -1,6 +1,20 @@
 'use strict'
 
 const feed_queries = {
+  get_components: /*sql*/ `
+    SELECT
+      p.id,
+      p.content,
+      p.created_at,
+      u.name        AS author_name,
+      u.handle      AS author_handle,
+      u.avatar_url  AS author_avatar_url
+    FROM posts p
+    JOIN users u ON u.id = p.author_id
+    WHERE p.content LIKE 'Component:%'
+    ORDER BY p.created_at DESC
+  `,
+
   get_user_posts_sql: /*sql*/ `
     SELECT
       p.id,
