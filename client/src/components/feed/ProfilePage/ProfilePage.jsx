@@ -1,50 +1,46 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import ProfileCard from '../ProfileCard/ProfileCard'
 import ActivityGraph from '../ActivityGraph/ActivityGraph'
 import ComponentList from '../ComponentList/ComponentList'
 import VideoList from '../VideoList/VideoList'
 import FriendsList from '../FriendsList/FriendsList'
 import ChatTray from '../../chat/ChatTray/ChatTray'
-import mockUser from '../../../data/mockUser'
-import mockComponents from '../../../data/mockComponents'
-import mockVideos from '../../../data/mockVideos'
-import mockContacts from '../../../data/mockContacts'
 import './ProfilePage.css'
 
-const MOCK_REPLIES = [
-  "Hey! What's up? 👋",
-  "That sounds great!",
-  "Interesting... tell me more",
-  "lol 😂 seriously?",
-  "Sure, let's do it!",
-  "I'm a bit busy rn, talk later?",
-  "omg yes exactly!",
-  "haha nice one 😄",
-]
+export default function ProfilePage({ currentUser }) {
+  const [chats, setChats]       = useState([])
+  const [contacts, setContacts] = useState([])
 
-let msgIdCounter = 1
+  useEffect(() => {
+    fetch('/api/connections/friends', { credentials: 'include' })
+      .then(r => r.ok ? r.json() : { friends: [] })
+      .then(data => setContacts((data.friends || []).map(f => ({ ...f, avatarSrc: f.avatarUrl, online: f.isOnline }))))
+  }, [])
 
-export default function ProfilePage() {
-  const [chats, setChats] = useState([])
-
-  function handleOpenChat(contactId) {
+  async function handleOpenChat(contactId) {
+    const existing = chats.find(c => c.contactId === contactId)
+    if (existing) {
+      setChats(prev => prev.map(c => c.contactId === contactId ? { ...c, minimized: false, unreadCount: 0 } : c))
+      return
+    }
+    const res = await fetch('/api/dm/conversations', {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ target_user_id: contactId }),
+    })
+    const convo = res.ok ? await res.json() : {}
+    const msgsRes = await fetch(`/api/dm/conversations/${convo.id}/messages`, { credentials: 'include' })
+    const msgsData = msgsRes.ok ? await msgsRes.json() : { messages: [] }
+    const newChat = {
+      contactId,
+      conversationId: convo.id,
+      minimized: false,
+      messages: (msgsData.messages || []).slice().reverse().map(m => ({ id: m.id, text: m.body, fromMe: m.sender_id === currentUser.id })),
+      unreadCount: 0,
+      closing: false,
+    }
     setChats(prev => {
-      const existing = prev.find(c => c.contactId === contactId)
-      if (existing) {
-        return prev.map(c =>
-          c.contactId === contactId
-            ? { ...c, minimized: false, unreadCount: 0 }
-            : c
-        )
-      }
-      const newChat = {
-        contactId,
-        minimized: false,
-        messages: [],
-        isTyping: false,
-        unreadCount: 0,
-        closing: false,
-      }
       const updated = [...prev, newChat]
       if (updated.length > 3) updated.shift()
       return updated
@@ -71,61 +67,42 @@ export default function ProfilePage() {
     setChats(prev => prev.filter(c => c.contactId !== contactId))
   }
 
-  function handleSendMessage(contactId, text) {
-    const userMsgId = msgIdCounter++
-    setChats(prev =>
-      prev.map(c =>
-        c.contactId === contactId
-          ? { ...c, messages: [...c.messages, { id: userMsgId, text, fromMe: true }] }
-          : c
-      )
-    )
-
-    const delay1 = 1000 + Math.random() * 1000
-    const delay2 = 600 + Math.random() * 400
-
-    setTimeout(() => {
-      setChats(prev =>
-        prev.map(c => c.contactId === contactId ? { ...c, isTyping: true } : c)
-      )
-
-      setTimeout(() => {
-        const replyText = MOCK_REPLIES[Math.floor(Math.random() * MOCK_REPLIES.length)]
-        const replyId = msgIdCounter++
-        setChats(prev =>
-          prev.map(c => {
-            if (c.contactId !== contactId) return c
-            return {
-              ...c,
-              isTyping: false,
-              messages: [...c.messages, { id: replyId, text: replyText, fromMe: false }],
-              unreadCount: c.minimized ? c.unreadCount + 1 : 0,
-            }
-          })
-        )
-      }, delay2)
-    }, delay1)
+  async function handleSendMessage(contactId, text) {
+    const chat = chats.find(c => c.contactId === contactId)
+    if (!chat?.conversationId) return
+    const res = await fetch(`/api/dm/conversations/${chat.conversationId}/messages`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ body: text }),
+    })
+    if (res.ok) {
+      const msg = await res.json()
+      setChats(prev => prev.map(c =>
+        c.contactId === contactId ? { ...c, messages: [...c.messages, { id: msg.id, text: msg.body, fromMe: true }] } : c
+      ))
+    }
   }
 
   return (
     <main className="profile-page">
       <div className="profile-page__inner">
         <div className="profile-page__main">
-          <ProfileCard user={mockUser} />
+          <ProfileCard user={currentUser} />
           <div className="profile-page__activity">
             <ActivityGraph />
           </div>
-          <ComponentList components={mockComponents} />
-          <VideoList videos={mockVideos} />
+          <ComponentList components={[]} />
+          <VideoList videos={[]} />
         </div>
         <aside className="profile-page__sidebar">
-          <FriendsList contacts={mockContacts} onMessage={handleOpenChat} />
+          <FriendsList contacts={contacts} onMessage={handleOpenChat} />
         </aside>
       </div>
 
       <ChatTray
         chats={chats}
-        contacts={mockContacts}
+        contacts={contacts}
         onMinimize={handleMinimize}
         onClose={handleClose}
         onRemove={handleRemove}
