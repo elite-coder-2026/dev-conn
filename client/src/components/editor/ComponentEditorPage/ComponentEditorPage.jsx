@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import ActivityGraph from '../../feed/ActivityGraph/ActivityGraph'
 import { EditorView, basicSetup } from 'codemirror'
 import { html } from '@codemirror/lang-html'
 import { css } from '@codemirror/lang-css'
@@ -219,6 +220,8 @@ export default function ComponentEditorPage({ currentUser = {} }) {
       <div className="comp-editor__header">
         <h1 className="comp-editor__title">Component Editor</h1>
       </div>
+
+      <ActivityGraph />
 
       <div className="comp-editor__editor-wrap">
         <div className="comp-editor__tabs">
