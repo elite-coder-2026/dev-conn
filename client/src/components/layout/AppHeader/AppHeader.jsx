@@ -8,15 +8,13 @@ import './AppHeader.css'
 
 const NAV_LINKS = [
   { label: 'Feed',      id: 'feed'     },
-  { label: 'Messages',  id: 'messages' },
   { label: 'Friends',   id: 'friends'  },
   { label: 'Discover',  id: 'discover' },
-  { label: 'Activity',  id: 'activity' },
   { label: 'Videos',    id: 'videos'   },
   { label: 'Editor',    id: 'editor'   },
 ]
 
-export default function AppHeader({ activeNav, setActiveNav, onSearch, currentUser = {} }) {
+export default function AppHeader({ activeNav, setActiveNav, onSearch, onLogout, currentUser = {} }) {
   const [search, setSearch]               = useState('')
   const [notifOpen, setNotifOpen]         = useState(false)
   const [notifications, setNotifications] = useState([])
@@ -93,6 +91,7 @@ export default function AppHeader({ activeNav, setActiveNav, onSearch, currentUs
           <button className="app-header__avatar-btn" aria-label="Profile" onClick={() => setActiveNav('profile')}>
             <Avatar src={currentUser.avatar_url} alt={currentUser.name || ''} size="sm" />
           </button>
+          <button className="app-header__logout-btn" onClick={onLogout}>Log out</button>
         </div>
       </div>
     </header>
