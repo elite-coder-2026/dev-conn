@@ -3,7 +3,7 @@ import CloseIcon from '@mui/icons-material/Close'
 import Avatar from '../../common/Avatar/Avatar'
 import './ShareModal.css'
 
-export default function ShareModal({ post, onClose, onShare }) {
+export default function ShareModal({ post, onClose, onShare, preview }) {
   const [description, setDescription] = useState('')
   const { author, timeAgo, content } = post
 
@@ -43,7 +43,7 @@ export default function ShareModal({ post, onClose, onShare }) {
           </div>
         </div>
 
-        {content && <p className="share-modal__post-content">{content}</p>}
+        {preview ? preview : content && <p className="share-modal__post-content">{content}</p>}
 
         <textarea
           className="share-modal__textarea"
