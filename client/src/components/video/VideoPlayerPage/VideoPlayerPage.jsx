@@ -27,6 +27,14 @@ export default function VideoPlayerPage({ currentUser = {} }) {
   const [comments, setComments]         = useState([])
   const [newComment, setNewComment]     = useState('')
   const [shareOpen, setShareOpen]       = useState(false)
+  const [relatedVideos, setRelatedVideos] = useState([])
+
+  useEffect(() => {
+    fetch('/api/videos', { credentials: 'include' })
+      .then(r => r.ok ? r.json() : { videos: [] })
+      .then(data => setRelatedVideos(data.videos || []))
+      .catch(() => {})
+  }, [])
 
   function handleAddComment(e) {
     e.preventDefault()
@@ -343,16 +351,16 @@ export default function VideoPlayerPage({ currentUser = {} }) {
         <aside className="vp-sidebar">
           <h2 className="vp-sidebar__heading">Up Next</h2>
           <div className="vp-related-list">
-            {[].map(r => (
+            {relatedVideos.map(r => (
               <div key={r.id} className="vp-related-card">
-                <div className="vp-related-card__thumb" style={{ background: r.thumbColor }}>
+                <div className="vp-related-card__thumb" style={{ background: r.thumb_color }}>
                   <div className="vp-related-card__grid" aria-hidden="true" />
                   <span className="vp-related-card__duration">{r.duration}</span>
                 </div>
                 <div className="vp-related-card__info">
                   <p className="vp-related-card__title">{r.title}</p>
-                  <p className="vp-related-card__channel">{r.channel}</p>
-                  <p className="vp-related-card__views">{r.views}</p>
+                  <p className="vp-related-card__channel">{r.uploader_name}</p>
+                  <p className="vp-related-card__views">{r.views_count.toLocaleString()} views</p>
                 </div>
               </div>
             ))}
