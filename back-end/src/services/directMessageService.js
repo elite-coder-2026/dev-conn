@@ -3,7 +3,7 @@
 /** @layer Service — Direct Messages business logic */
 
 const pool           = require('../db')
-const { dm_queries } = require('./queries')
+const { dm_queries: connection_queries } = require('./queries')
 const { getIo }      = require('../socket')
 
 // ── Conversations ─────────────────────────────────────────────────────────────
