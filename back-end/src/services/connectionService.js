@@ -27,7 +27,8 @@ async function sendRequest(requesterId, recipientId) {
   }
 
   const { rows } = await pool.query(connection_queries.send_request, [requesterId, recipientId])
-  return rows[0] ?? null
+  if (!rows[0]) { const e = new Error('Friend request already exists'); e.status = 409; throw e }
+  return rows[0]
 }
 
 async function cancelRequest(requestId, requesterId) {
@@ -53,6 +54,10 @@ async function acceptRequest(requestId, recipientId) {
   if (!rows.length) {
     const e = new Error('Request not found or not pending'); e.status = 404; throw e
   }
+  await pool.query(
+    `INSERT INTO follows (follower_id, following_id) VALUES ($1, $2), ($2, $1) ON CONFLICT DO NOTHING`,
+    [rows[0].requester_id, recipientId]
+  )
   return rows[0]
 }
 
@@ -76,6 +81,10 @@ async function unfriend(userId, targetId) {
   if (!rows.length) {
     const e = new Error('Not friends with this user'); e.status = 404; throw e
   }
+  await pool.query(
+    `DELETE FROM follows WHERE (follower_id = $1 AND following_id = $2) OR (follower_id = $2 AND following_id = $1)`,
+    [userId, targetId]
+  )
   return { unfriended: true }
 }
 
@@ -102,7 +111,7 @@ async function getDiscover(userId, limit = 20, offset = 0) {
     avatarUrl:    u.avatar_url,
     isOnline:     u.is_online,
     followersCount: u.followers_count,
-    connection: deriveConnectionView(u, userId),
+    connection: { ...deriveConnectionView(u, userId), requestId: u.friend_request_id || null },
   }))
 }
 
