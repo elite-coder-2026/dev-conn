@@ -1,104 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
+import ShareModal from '../../feed/ShareModal/ShareModal'
 import './VideoPlayerPage.css'
 
-const MOCK_COMMENTS = [
-  {
-    id: 'c1',
-    username: 'Nadia Osei',
-    initials: 'NO',
-    color: '#E040FB',
-    timeAgo: '2 days ago',
-    text: 'The section on token aliasing at 14:32 finally made it click for me. Been struggling with this for months — thank you.',
-    likes: 847,
-  },
-  {
-    id: 'c2',
-    username: 'Riku Mäkinen',
-    initials: 'RM',
-    color: '#00BFA5',
-    timeAgo: '3 days ago',
-    text: 'Watched this twice back-to-back. The way you break down semantic vs. literal tokens is better than any blog post I\'ve read on the subject.',
-    likes: 413,
-  },
-  {
-    id: 'c3',
-    username: 'Theo Callahan',
-    initials: 'TC',
-    color: '#FF6D00',
-    timeAgo: '5 days ago',
-    text: 'Just migrated our entire component library using this approach. Took a weekend but the result is clean. Highly recommend pausing at 22:10.',
-    likes: 289,
-  },
-  {
-    id: 'c4',
-    username: 'Yara Lindström',
-    initials: 'YL',
-    color: '#00C8FF',
-    timeAgo: '1 week ago',
-    text: 'I appreciate that you showed the messy intermediate state — most tutorials skip that and it\'s always where I get lost.',
-    likes: 172,
-  },
-  {
-    id: 'c5',
-    username: 'Dev Singh',
-    initials: 'DS',
-    color: '#FFD600',
-    timeAgo: '2 weeks ago',
-    text: 'Would love a follow-up on theming multiple brands from a single token set. That\'s the real challenge we\'re facing right now.',
-    likes: 98,
-  },
-]
-
-const MOCK_RELATED = [
-  {
-    id: 'r1',
-    title: 'CSS Grid Mastery: From Basics to Complex Layouts',
-    channel: 'Alex Rivera',
-    views: '218K views',
-    duration: '28:14',
-    thumbColor: '#1a2744',
-  },
-  {
-    id: 'r2',
-    title: 'React Performance: Profiling and Fixing Re-renders',
-    channel: 'Alex Rivera',
-    views: '94K views',
-    duration: '41:07',
-    thumbColor: '#1a3322',
-  },
-  {
-    id: 'r3',
-    title: 'Accessible Modals, Drawers & Tooltips',
-    channel: 'Alex Rivera',
-    views: '67K views',
-    duration: '19:55',
-    thumbColor: '#2d1a44',
-  },
-  {
-    id: 'r4',
-    title: 'The Complete Guide to CSS Custom Properties',
-    channel: 'Alex Rivera',
-    views: '312K views',
-    duration: '53:22',
-    thumbColor: '#2d1a1a',
-  },
-  {
-    id: 'r5',
-    title: 'Command Palettes: UX Patterns & Implementation',
-    channel: 'Alex Rivera',
-    views: '41K views',
-    duration: '24:38',
-    thumbColor: '#1a2a2d',
-  },
-  {
-    id: 'r6',
-    title: 'Typography Systems for UI — Beyond Font Pairing',
-    channel: 'Alex Rivera',
-    views: '55K views',
-    duration: '33:49',
-    thumbColor: '#2d2a1a',
-  },
-]
 
 function formatTime(seconds) {
   if (isNaN(seconds)) return '0:00'
@@ -107,7 +10,7 @@ function formatTime(seconds) {
   return `${m}:${s.toString().padStart(2, '0')}`
 }
 
-export default function VideoPlayerPage() {
+export default function VideoPlayerPage({ currentUser = {} }) {
   const videoRef = useRef(null)
   const playerWrapRef = useRef(null)
 
@@ -121,17 +24,20 @@ export default function VideoPlayerPage() {
   const [liked, setLiked]               = useState(false)
   const [likeCount, setLikeCount]       = useState(4821)
   const [disliked, setDisliked]         = useState(false)
-  const [comments, setComments]         = useState(MOCK_COMMENTS)
+  const [comments, setComments]         = useState([])
   const [newComment, setNewComment]     = useState('')
+  const [shareOpen, setShareOpen]       = useState(false)
 
   function handleAddComment(e) {
     e.preventDefault()
     const text = newComment.trim()
     if (!text) return
+    const initials = (currentUser.name || '').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()
     setComments(prev => [{
       id: `c${Date.now()}`,
-      username: 'Alex Rivera',
-      initials: 'AR',
+      username: currentUser.name,
+      initials,
+      avatarSrc: currentUser.avatarSrc,
       color: '#5B4FE9',
       timeAgo: 'Just now',
       text,
@@ -238,7 +144,7 @@ export default function VideoPlayerPage() {
               onEnded={handleEnded}
               onClick={togglePlay}
             >
-              <source src="" type="video/mp4" />
+              <source src="/videos/vid1.mp4" type="video/mp4" />
             </video>
 
 
@@ -304,10 +210,15 @@ export default function VideoPlayerPage() {
             <h1 className="vp-title">Building a Design System from Scratch</h1>
             <div className="vp-meta-row">
               <div className="vp-channel">
-                <div className="vp-channel__avatar">AR</div>
+                <div className="vp-channel__avatar">
+                  {currentUser.avatarSrc
+                    ? <img src={currentUser.avatarSrc} alt={currentUser.name} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
+                    : (currentUser.name || '').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()
+                  }
+                </div>
                 <div>
-                  <p className="vp-channel__name">Alex Rivera</p>
-                  <p className="vp-channel__subs">48.2K subscribers</p>
+                  <p className="vp-channel__name">{currentUser.name}</p>
+                  <p className="vp-channel__subs">{currentUser.handle}</p>
                 </div>
                 <button className="vp-subscribe-btn">Subscribe</button>
               </div>
@@ -327,7 +238,7 @@ export default function VideoPlayerPage() {
                 >
                   <svg viewBox="0 0 24 24" fill="currentColor"><path d="M15 3H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v2c0 1.1.9 2 2 2h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L9.83 23l6.59-6.59c.36-.36.58-.86.58-1.41V5c0-1.1-.9-2-2-2zm4 0v12h4V3h-4z"/></svg>
                 </button>
-                <button className="vp-action-btn" aria-label="Share">
+                <button className="vp-action-btn" aria-label="Share" onClick={() => setShareOpen(true)}>
                   <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></svg>
                   <span>Share</span>
                 </button>
@@ -377,7 +288,12 @@ export default function VideoPlayerPage() {
             <h2 className="vp-comments__heading">{comments.length} Comments</h2>
 
             <form className="vp-comment-form" onSubmit={handleAddComment}>
-              <div className="vp-comment__avatar" style={{ background: '#5B4FE9' }}>AR</div>
+              <div className="vp-comment__avatar" style={{ background: '#5B4FE9', overflow: 'hidden', padding: 0 }}>
+                {currentUser.avatarSrc
+                  ? <img src={currentUser.avatarSrc} alt={currentUser.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  : (currentUser.name || '').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()
+                }
+              </div>
               <div className="vp-comment-form__input-wrap">
                 <textarea
                   className="vp-comment-form__input"
@@ -398,8 +314,11 @@ export default function VideoPlayerPage() {
             <div className="vp-comments__list">
               {comments.map(c => (
                 <div key={c.id} className="vp-comment">
-                  <div className="vp-comment__avatar" style={{ background: c.color }}>
-                    {c.initials}
+                  <div className="vp-comment__avatar" style={{ background: c.color, overflow: 'hidden', padding: 0 }}>
+                    {c.avatarSrc
+                      ? <img src={c.avatarSrc} alt={c.username} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      : c.initials
+                    }
                   </div>
                   <div className="vp-comment__body">
                     <div className="vp-comment__header">
@@ -424,7 +343,7 @@ export default function VideoPlayerPage() {
         <aside className="vp-sidebar">
           <h2 className="vp-sidebar__heading">Up Next</h2>
           <div className="vp-related-list">
-            {MOCK_RELATED.map(r => (
+            {[].map(r => (
               <div key={r.id} className="vp-related-card">
                 <div className="vp-related-card__thumb" style={{ background: r.thumbColor }}>
                   <div className="vp-related-card__grid" aria-hidden="true" />
@@ -441,6 +360,40 @@ export default function VideoPlayerPage() {
         </aside>
 
       </div>
+
+      {shareOpen && (
+        <ShareModal
+          post={{
+            author: { name: currentUser.name, handle: currentUser.handle, avatarSrc: currentUser.avatarSrc },
+            timeAgo: 'Mar 14, 2026',
+            content: 'Building a Design System from Scratch',
+          }}
+          preview={
+            <div style={{ background: '#000', borderRadius: 8, overflow: 'hidden', margin: '8px 0' }}>
+              <div style={{ background: '#111', height: 160, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <svg style={{ width: 48, height: 48, color: 'rgba(255,255,255,0.4)' }} viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+              </div>
+              <div style={{ padding: '10px 12px', background: '#1a1a1a' }}>
+                <p style={{ color: '#fff', fontSize: 13, fontWeight: 600, margin: 0 }}>Building a Design System from Scratch</p>
+                <p style={{ color: '#888', fontSize: 12, margin: '4px 0 0' }}>1:02:44</p>
+              </div>
+            </div>
+          }
+          onClose={() => setShareOpen(false)}
+          onShare={async (description) => {
+            const body = description
+              ? `${description}\n\nVideo: Building a Design System from Scratch\n::video-meta:: 1:02:44\n::video-src:: /videos/vid1.mp4`
+              : `Video: Building a Design System from Scratch\n::video-meta:: 1:02:44\n::video-src:: /videos/vid1.mp4`
+            await fetch('/api/posts', {
+              method: 'POST',
+              credentials: 'include',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ content: body }),
+            })
+            setShareOpen(false)
+          }}
+        />
+      )}
     </div>
   )
 }
