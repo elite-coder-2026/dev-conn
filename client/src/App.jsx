@@ -11,6 +11,20 @@ import SearchResultsPage from './components/search/SearchResultsPage/SearchResul
 import ComponentEditorPage from './components/editor/ComponentEditorPage/ComponentEditorPage'
 import AuthPage from './components/auth/AuthPage/AuthPage'
 
+function normalizeUser(raw) {
+  if (!raw) return null
+  return {
+    ...raw,
+    avatarSrc: raw.avatar_url,
+    coverColor: raw.cover_color,
+    stats: {
+      posts: raw.posts_count ?? 0,
+      followers: raw.followers_count ?? 0,
+      following: raw.following_count ?? 0,
+    },
+  }
+}
+
 function App() {
   const [currentUser, setCurrentUser] = useState(null)
   const [authChecked, setAuthChecked] = useState(false)
@@ -20,12 +34,17 @@ function App() {
   useEffect(() => {
     fetch('/api/users/me', { credentials: 'include' })
       .then(r => r.ok ? r.json() : null)
-      .then(user => { setCurrentUser(user); setAuthChecked(true) })
+      .then(user => { setCurrentUser(normalizeUser(user)); setAuthChecked(true) })
       .catch(() => setAuthChecked(true))
   }, [])
 
   function handleAuth(user) {
-    setCurrentUser(user)
+    setCurrentUser(normalizeUser(user))
+  }
+
+  function handleLogout() {
+    fetch('/api/auth/logout', { method: 'POST', credentials: 'include' })
+      .finally(() => setCurrentUser(null))
   }
 
   function handleSearch(query) {
@@ -41,16 +60,16 @@ function App() {
 
   return (
     <>
-      <AppHeader activeNav={activeNav} setActiveNav={setActiveNav} onSearch={handleSearch} currentUser={currentUser} />
+      <AppHeader activeNav={activeNav} setActiveNav={setActiveNav} onSearch={handleSearch} onLogout={handleLogout} currentUser={currentUser} />
       {activeNav === 'activity' && (
         <main style={{ maxWidth: 700, margin: '32px auto', padding: '0 16px' }}>
           <ActivityGraph />
         </main>
       )}
-      {activeNav === 'messages' && <MessagesPage />}
+      {activeNav === 'messages' && <MessagesPage currentUser={currentUser} />}
       {activeNav === 'friends' && <FriendsPage />}
-      {activeNav === 'profile' && <ProfilePage />}
-      {activeNav === 'videos' && <VideoPlayerPage />}
+      {activeNav === 'profile' && <ProfilePage currentUser={currentUser} />}
+      {activeNav === 'videos' && <VideoPlayerPage currentUser={currentUser} />}
       {activeNav === 'discover' && <DiscoverPage />}
       {activeNav === 'search' && <SearchResultsPage query={searchQuery} />}
       {activeNav === 'editor' && <ComponentEditorPage currentUser={currentUser} />}
