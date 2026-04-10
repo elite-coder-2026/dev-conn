@@ -13,9 +13,10 @@ function formatPosts(rows) {
 async function getFeed(userId, limit, offset) {
   const { rows } = await pool.query(
     `${feed_queries.get_user_posts_sql}
-     WHERE p.author_id = $1
-        OR p.author_id IN (SELECT following_id FROM follows WHERE follower_id = $1)
-     ORDER BY p.created_at DESC
+     WHERE (p.author_id = $1
+         OR p.author_id IN (SELECT following_id FROM follows WHERE follower_id = $1)
+         OR p.id IN (SELECT post_id FROM shares WHERE user_id = $1))
+     ORDER BY GREATEST(p.created_at, COALESCE((SELECT created_at FROM shares WHERE post_id = p.id AND user_id = $1), p.created_at)) DESC
      LIMIT $2 OFFSET $3`,
     [userId, limit, offset]
   )
