@@ -15,16 +15,6 @@ function getAccentColor(name = '') {
   return PALETTE[sum % PALETTE.length]
 }
 
-const MOCK_REPLIES = [
-  "Hey! What's up? 👋",
-  "That sounds great!",
-  "Interesting... tell me more",
-  "lol 😂 seriously?",
-  "Sure, let's do it!",
-  "I'm a bit busy rn, talk later?",
-  "omg yes exactly!",
-  "haha nice one 😄",
-]
 
 export default function ChatWindow({
   contact,
@@ -143,4 +133,3 @@ export default function ChatWindow({
   )
 }
 
-export { MOCK_REPLIES }
