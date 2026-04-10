@@ -130,6 +130,12 @@ const connection_queries = {
            OR (fr.requester_id = u.id AND fr.recipient_id = $1)
         LIMIT 1
       ) AS friend_requester_id,
+      (
+        SELECT fr.id FROM friend_requests fr
+        WHERE (fr.requester_id = $1 AND fr.recipient_id = u.id)
+           OR (fr.requester_id = u.id AND fr.recipient_id = $1)
+        LIMIT 1
+      ) AS friend_request_id,
       EXISTS(
         SELECT 1 FROM follows WHERE follower_id = $1 AND following_id = u.id
       ) AS is_following
