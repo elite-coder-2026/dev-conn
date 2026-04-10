@@ -17,6 +17,7 @@ const contactRoutes        = require('./routes/contacts')
 const connectionRoutes     = require('./routes/connections')
 const directMessageRoutes  = require('./routes/directMessages')
 const notificationRoutes   = require('./routes/notifications')
+const videoRoutes          = require('./routes/videos')
 
 const app  = express()
 const PORT = process.env.PORT || 3001
@@ -35,6 +36,7 @@ app.use('/api/contacts',    contactRoutes)
 app.use('/api/connections', connectionRoutes)
 app.use('/api/dm',            directMessageRoutes)
 app.use('/api/notifications', notificationRoutes)
+app.use('/api/videos',        videoRoutes)
 
 // ── Health check ──────────────────────────────────────────────────────────────
 app.get('/api/health', async (_req, res) => {
