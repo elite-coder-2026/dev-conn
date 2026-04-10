@@ -105,3 +105,20 @@ CREATE TABLE IF NOT EXISTS notifications (
 
 CREATE INDEX IF NOT EXISTS idx_notifications_user_id    ON notifications (user_id);
 CREATE INDEX IF NOT EXISTS idx_notifications_created_at ON notifications (created_at DESC);
+
+-- ─────────────────────────────────────────────────────────────────────────────
+
+CREATE TABLE IF NOT EXISTS videos (
+  id          UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
+  title       TEXT        NOT NULL,
+  description TEXT,
+  src         TEXT        NOT NULL,
+  duration    TEXT        NOT NULL,
+  thumb_color TEXT        NOT NULL DEFAULT '#1a1a2e',
+  uploader_id UUID        NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  views_count INT         NOT NULL DEFAULT 0,
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_videos_uploader_id ON videos (uploader_id);
+CREATE INDEX IF NOT EXISTS idx_videos_created_at  ON videos (created_at DESC);
