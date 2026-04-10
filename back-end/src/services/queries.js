@@ -8,6 +8,7 @@ const feed_queries         = require('./queries/feed')
 const connection_queries   = require('./queries/connection')
 const dm_queries           = require('./queries/dm')
 const notification_queries = require('./queries/notification')
+const video_queries        = require('./queries/video')
 
 module.exports = {
   auth_queries,
@@ -18,4 +19,5 @@ module.exports = {
   connection_queries,
   dm_queries,
   notification_queries,
+  video_queries,
 }
