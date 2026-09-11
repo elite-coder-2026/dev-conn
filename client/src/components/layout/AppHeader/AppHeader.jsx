@@ -8,6 +8,7 @@ import './AppHeader.css'
 
 const NAV_LINKS = [
   { label: 'Feed',      id: 'feed'     },
+  { label: 'Messages',  id: 'messages' },
   { label: 'Friends',   id: 'friends'  },
   { label: 'Discover',  id: 'discover' },
   { label: 'Videos',    id: 'videos'   },
