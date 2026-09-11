@@ -10,6 +10,6 @@ router.get('/search',  requireAuth, userController.searchUsers)
 router.get('/me',      requireAuth, userController.getMe)
 router.put('/me',      requireAuth, userController.updateMe)
 router.delete('/me',   requireAuth, userController.deleteMe)
-router.get('/:id',                  userController.getById)
+router.get('/:id',      requireAuth, userController.getById)
 
 module.exports = router
