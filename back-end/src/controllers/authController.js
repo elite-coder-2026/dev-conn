@@ -3,7 +3,7 @@ const authService = require('../services/authService')
 
 const COOKIE_OPTS = {
   httpOnly: true,
-  sameSite: 'lax',
+  sameSite: 'strict',
   secure: process.env.NODE_ENV === 'production',
   maxAge: 7 * 24 * 60 * 60 * 1000,
 }
@@ -13,6 +13,9 @@ async function register(req, res, next) {
     const { name, handle, password, avatar_url = null, cover_color = null } = req.body
     if (!name || !handle || !password) {
       const e = new Error('name, handle, and password are required'); e.status = 400; return next(e)
+    }
+    if (password.length < 8) {
+      const e = new Error('password must be at least 8 characters'); e.status = 400; return next(e)
     }
     const { token, user } = await authService.register({ name, handle, password, avatar_url, cover_color })
     res.cookie('token', token, COOKIE_OPTS)
