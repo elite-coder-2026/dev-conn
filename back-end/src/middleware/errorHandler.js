@@ -5,13 +5,13 @@ module.exports = function errorHandler(err, req, res, _next) {
 
   // PostgreSQL error codes
   if (err.code === '23505') {
-    return res.status(409).json({ error: 'Resource already exists', detail: err.detail })
+    return res.status(409).json({ error: 'Resource already exists' })
   }
   if (err.code === '23503') {
     return res.status(400).json({ error: 'Referenced resource does not exist' })
   }
   if (err.code === '23514') {
-    return res.status(400).json({ error: 'Constraint violation', detail: err.detail })
+    return res.status(400).json({ error: 'Constraint violation' })
   }
 
   // App-level errors (e.g. new Error('Not found'); err.status = 404)
