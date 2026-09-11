@@ -1,8 +1,14 @@
 'use strict'
 require('dotenv').config()
 
+if (!process.env.JWT_SECRET || process.env.JWT_SECRET.length < 32) {
+  console.error('FATAL: JWT_SECRET is missing or shorter than 32 characters')
+  process.exit(1)
+}
+
 const http         = require('http')
 const express      = require('express')
+const helmet       = require('helmet')
 const cors         = require('cors')
 const cookieParser = require('cookie-parser')
 const pool         = require('./db')
@@ -23,6 +29,7 @@ const app  = express()
 const PORT = process.env.PORT || 3001
 
 // ── Middleware ────────────────────────────────────────────────────────────────
+app.use(helmet())
 app.use(cors({ origin: process.env.CLIENT_ORIGIN || 'http://localhost:5173', credentials: true }))
 app.use(cookieParser())
 app.use(express.json())
