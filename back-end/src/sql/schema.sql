@@ -8,9 +8,12 @@ CREATE TABLE IF NOT EXISTS users (
   avatar_url    TEXT,
   cover_color   TEXT        NOT NULL DEFAULT 'linear-gradient(135deg, #5B4FE9 0%, #7B72ED 100%)',
   password_hash TEXT        NOT NULL,
+  password_changed_at TIMESTAMPTZ,
   is_online     BOOLEAN     NOT NULL DEFAULT FALSE,
   created_at    TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+ALTER TABLE users ADD COLUMN IF NOT EXISTS password_changed_at TIMESTAMPTZ;
 
 CREATE INDEX IF NOT EXISTS idx_users_handle_lower ON users (lower(handle));
 
