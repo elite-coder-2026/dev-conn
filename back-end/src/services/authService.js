@@ -6,6 +6,12 @@ const formatUser       = require('../utils/formatUser')
 const userService      = require('./userService')
 const { auth_queries } = require('./queries')
 
+// bcrypt hash compared against when a handle is not found, so login spends the
+// same time whether or not the account exists (no user enumeration). Generated
+// at the configured cost so its compare time matches a real one.
+const BCRYPT_ROUNDS = parseInt(process.env.BCRYPT_ROUNDS, 10) || 12
+const DUMMY_HASH = bcrypt.hashSync('unused', BCRYPT_ROUNDS)
+
 function signToken(user) {
   return jwt.sign(
     { sub: user.id, handle: user.handle },
@@ -35,13 +41,12 @@ async function login({ handle, password }) {
   const { rows } = await pool.query(auth_queries.login, [cleanHandle])
 
   const INVALID = 'Invalid credentials'
-  if (!rows.length) { const e = new Error(INVALID); e.status = 401; throw e }
+  const hash = rows.length ? rows[0].password_hash : DUMMY_HASH
+  const match = await bcrypt.compare(password, hash)
+  if (!rows.length || !match) { const e = new Error(INVALID); e.status = 401; throw e }
 
-  const match = await bcrypt.compare(password, rows[0].password_hash)
-  if (!match) { const e = new Error(INVALID); e.status = 401; throw e }
-
-  const { password_hash: _, ...userRow } = rows[0]
-  return { token: signToken(userRow), user: formatUser(userRow) }
+  const user = await userService.findById(rows[0].id)
+  return { token: signToken(user), user }
 }
 
 async function changePassword(userId, { currentPassword, newPassword }) {
