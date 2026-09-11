@@ -2,9 +2,10 @@
 
 function formatUser(row) {
   if (!row) return null
+  const { password_hash, password_changed_at, ...safe } = row
   return {
-    ...row,
-    handle: row.handle.startsWith('@') ? row.handle : `@${row.handle}`,
+    ...safe,
+    handle: safe.handle.startsWith('@') ? safe.handle : `@${safe.handle}`,
   }
 }
 
